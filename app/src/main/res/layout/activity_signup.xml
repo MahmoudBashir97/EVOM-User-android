@@ -20,7 +20,6 @@
         android:layout_below="@id/imagesignup"
         android:layout_centerHorizontal="true"
         android:background="@drawable/customborder"
-
         android:orientation="vertical">
         <ImageView
             android:layout_width="100dp"
