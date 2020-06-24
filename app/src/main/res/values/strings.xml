@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EVOM_User_app</string>
+    <string name="title_activity_home__maps_">Map</string>
 </resources>

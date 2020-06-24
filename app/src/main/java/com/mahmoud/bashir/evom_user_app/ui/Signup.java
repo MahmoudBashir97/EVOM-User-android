@@ -1,8 +1,10 @@
-package com.mahmoud.bashir.evom_user_app;
+package com.mahmoud.bashir.evom_user_app.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.mahmoud.bashir.evom_user_app.R;
 
 public class Signup extends AppCompatActivity {
 
