@@ -8,6 +8,7 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+    <include layout="@layout/activity_home__maps"/>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
@@ -16,8 +17,9 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
-
-    <include layout="@layout/activity_home__maps"/>
+        app:itemShapeFillColor="#000"
+        app:itemTextColor="#000"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+       />
 
 </androidx.drawerlayout.widget.DrawerLayout>
