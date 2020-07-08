@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-     <RelativeLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,15 +12,40 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Maps.Home_MapsActivity" />
+        tools:context=".Maps.Home_MapsActivity"
+        android:layout_above="@+id/edt_to_destination"/>
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <ImageView
+        android:id="@+id/open_drawer"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_baseline_sort_24"
+        android:layout_margin="10dp"/>
+
+    <RelativeLayout
+        android:id="@+id/rel"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        android:background="#fff"
-        map:title=""
-        />
-     </RelativeLayout>
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:background="#E9EBF4"/>
+
+        <EditText
+            android:id="@+id/edt_to_destination"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/etd_back_gr"
+            android:text="Where to go ? "
+            android:textColor="#D6D2D6"
+            android:textStyle="italic"
+            android:textSize="18sp"
+            android:padding="8dp"
+            android:editable="false"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="70dp"
+            android:elevation="18dp"
+            />
+
+</RelativeLayout>
 
