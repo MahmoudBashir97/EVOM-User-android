@@ -48,7 +48,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.mahmoud.bashir.evom_user_app.Maps.Direction_route.TaskLoadedCallback;
 import com.mahmoud.bashir.evom_user_app.R;
-import com.mahmoud.bashir.evom_user_app.ui.TripsActiviy;
 import com.sucho.placepicker.AddressData;
 import com.sucho.placepicker.Constants;
 import com.sucho.placepicker.MapType;
