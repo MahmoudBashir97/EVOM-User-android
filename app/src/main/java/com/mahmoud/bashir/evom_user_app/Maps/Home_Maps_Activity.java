@@ -2,14 +2,11 @@ package com.mahmoud.bashir.evom_user_app.Maps;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -17,16 +14,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,9 +40,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.mahmoud.bashir.evom_user_app.Maps.Direction_route.TaskLoadedCallback;
 import com.mahmoud.bashir.evom_user_app.R;
+import com.mahmoud.bashir.evom_user_app.loadingAlertdialog.LoadingDialog;
+import com.mahmoud.bashir.evom_user_app.ui.Settings_Activity;
+import com.mahmoud.bashir.evom_user_app.ui.Wallet_Activity;
 import com.sucho.placepicker.AddressData;
 import com.sucho.placepicker.Constants;
 import com.sucho.placepicker.MapType;
@@ -80,9 +79,15 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
     EditText edt_to_destination;
     ImageView open_drawer;
     TextView nav_trips,nav_wallet,nav_payment,nav_packages,nav_settings;
-
+    View bottom_sheet;
 
     int PLACE_PICKER_REQUEST = 1;
+    Intent nt;
+
+
+    private BottomSheetBehavior mbottomSheetBehavior;
+    LoadingDialog loadingDialog;
+    private CountDownTimer timer;
 
     /**
      * permissions request code
@@ -106,12 +111,18 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        loadingDialog=new LoadingDialog(this);
+
         //ButterKnife.bind(this);
         checkPermissions();
 
         //init Views
         open_drawer = findViewById(R.id.open_drawer);
         edt_to_destination = findViewById(R.id.edt_to_destination);
+        bottom_sheet=findViewById(R.id.bottom);
+        mbottomSheetBehavior=BottomSheetBehavior.from(bottom_sheet);
+        mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -123,13 +134,13 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         nav_payment =headerView.findViewById(R.id.nav_payment);
         nav_packages =headerView.findViewById(R.id.nav_packages);
         nav_settings =headerView.findViewById(R.id.nav_settings);
-
         nav_trips.setOnClickListener(view -> {
             Toast.makeText(this, "yrysgfdhjtyyhj", Toast.LENGTH_SHORT).show();
             drawer.closeDrawer(GravityCompat.START);
         });
         nav_wallet.setOnClickListener(view -> {
-            Toast.makeText(this, "wallet", Toast.LENGTH_SHORT).show();
+            nt = new Intent(Home_Maps_Activity.this, Wallet_Activity.class);
+            startActivity(nt);
             drawer.closeDrawer(GravityCompat.START);
         });
         nav_payment.setOnClickListener(view -> {
@@ -141,7 +152,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
             drawer.closeDrawer(GravityCompat.START);
         });
         nav_settings.setOnClickListener(view -> {
-            Toast.makeText(this, "settings", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Home_Maps_Activity.this, Settings_Activity.class));
             drawer.closeDrawer(GravityCompat.START);
         });
 
@@ -157,7 +168,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                         .setLatLong(lastLocation.getLatitude(), lastLocation.getLongitude())
                         .showLatLong(true)
                         .setMarkerImageImageColor(R.color.colorRed)
-                        .setMapRawResourceStyle(R.raw.white_map_style)
+                        .setMapRawResourceStyle(R.raw.drive_map_style)
                         .setMapType(MapType.NORMAL)
                         .build(Home_Maps_Activity.this);
 
@@ -175,13 +186,33 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                 startActivityForResult(intent, Constants.PLACE_PICKER_REQUEST);*/
 
             if (isNetworkConnected()) {
-                startActivityForResult(intent, Constants.PLACE_PICKER_REQUEST);
+                loadingDialog.startLoadingDialog();
+
+                timer = new CountDownTimer(2000, 500) {
+
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        try{
+                            loadingDialog.dismissDialog();
+                            startActivityForResult(intent, Constants.PLACE_PICKER_REQUEST);
+                        }catch(Exception e){
+                            Log.e("Error", "Error: " + e.toString());
+                        }
+                    }
+                }.start();
+
             } else {
                 Toast.makeText(this, "Please check your Internet Connection!", Toast.LENGTH_SHORT).show();
             }
 
         }
         });
+
     }
 
     @Override
@@ -193,7 +224,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
             // in a raw resource file.
             boolean success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.drive_map_style));
+                            this, R.raw.white_map_style));
 
             if (!success) {
                 Log.e(TAG, "Style parsing failed.");
@@ -253,10 +284,14 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
 
         // بيعمل تحديث للوكيشن كل كام ثانية
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(60000); // 30 second
-        locationRequest.setFastestInterval(60000);
+        locationRequest.setInterval(5000); // 5 second
+        locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(locationRequest.PRIORITY_HIGH_ACCURACY); // بتخليه يقرا اللوكيشن اسرع
         //track_curLocation();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION )== PackageManager.PERMISSION_GRANTED){
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,locationRequest,this);
+        }
+
     }
 
     @Override
@@ -273,15 +308,17 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
     public void onLocationChanged(Location location) {
         lastLocation = location;
 
-
-        mylatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        mylatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.clear();
+        mMap.addMarker(new MarkerOptions().position(mylatLng).title("My Location").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(mylatLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
         if (dest_lat != null){
             placelatlng= new LatLng(dest_lat,dest_lng);
             mMap.addMarker(new MarkerOptions().position(placelatlng).title("destination").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
         }
-        track_curLocation();
+       // track_curLocation();
     }
 
 
@@ -293,7 +330,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                 LatLng loc = new LatLng(mloc.getLatitude(),mloc.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(loc).title("موقعي الحالي").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
             }
         }
 
@@ -310,6 +347,29 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                     String address = String.format("Place: %s",addressData.toString());
                     dest_lat = addressData.getLatitude();
                     dest_lng = addressData.getLongitude();
+                    if (dest_lat != null){
+                        bottom_sheet.setVisibility(View.VISIBLE);
+                        loadingDialog.startLoadingDialog();
+                        timer = new CountDownTimer(2000, 500) {
+
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                try{
+                                    loadingDialog.dismissDialog();
+                                    edt_to_destination.setVisibility(View.GONE);
+                                    mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+                                    mMap.addMarker(new MarkerOptions().position(placelatlng).title("destination").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
+                                }catch(Exception e){
+                                    Log.e("Error", "Error: " + e.toString());
+                                }
+                            }
+                        }.start();
+                    }
 
                 } catch (Exception e) {
                     Log.e("MainActivity", e.getMessage());
