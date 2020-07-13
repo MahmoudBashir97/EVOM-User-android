@@ -20,7 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.Wallet_Activity"></activity>
+        <activity android:name=".PaymentActivity"></activity>
+        <activity android:name=".ui.Wallet_Activity" />
         <activity android:name=".ui.Settings_Activity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
