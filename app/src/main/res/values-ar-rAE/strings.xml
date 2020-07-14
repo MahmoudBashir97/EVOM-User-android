@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string name="app_name">EVOM_User_app</string>
+    <string name="title_activity_home__maps_">Map</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+
+    <!-- Nav Header -->
+    <string name="nav_trips_w">رحلاتك</string>
+    <string name="nav_wallet_w">محفظة</string>
+    <string name="nav_payment_w">الدفع</string>
+    <string name="nav_packages_w">Packages</string>
+    <string name="nav_settings_w">الاعدادات</string>
+    <string name="nav_help_w">مساعدة</string>
+
+
+    <!-- Settings -->
+    <string name="toolbar_w">الاعدادات</string>
+    <string name="Name_w">الاسم</string>
+    <string name="Phone_number_w">رقم الهاتف</string>
+    <string name="Email_w">الايميل</string>
+    <string name="city_w">المدينة</string>
+    <string name="Language_w">اللغة</string>
+    <string name="Sign_out_w">تسجيل الخروج</string>
+
+    <!-- Language -->
+    <string name="english_w">English</string>
+    <string name="arabic_w">عربي</string>
+
+</resources>

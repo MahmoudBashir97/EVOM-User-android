@@ -7,6 +7,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
@@ -42,9 +44,18 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.mahmoud.bashir.evom_user_app.Adapters.available_drivers_adpt;
 import com.mahmoud.bashir.evom_user_app.Maps.Direction_route.TaskLoadedCallback;
 import com.mahmoud.bashir.evom_user_app.R;
 import com.mahmoud.bashir.evom_user_app.loadingAlertdialog.LoadingDialog;
+import com.mahmoud.bashir.evom_user_app.pojo.driver_Info_Model;
 import com.mahmoud.bashir.evom_user_app.ui.Settings_Activity;
 import com.mahmoud.bashir.evom_user_app.ui.Wallet_Activity;
 import com.sucho.placepicker.AddressData;
@@ -80,6 +91,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
     ImageView open_drawer;
     TextView nav_trips,nav_wallet,nav_payment,nav_packages,nav_settings;
     View bottom_sheet;
+    RecyclerView rec_btsheet;
 
     int PLACE_PICKER_REQUEST = 1;
     Intent nt;
@@ -101,6 +113,16 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE };
 
 
+
+
+    FirebaseDatabase database;
+    DatabaseReference reference;
+    FirebaseAuth auth;
+    String CUID;
+    available_drivers_adpt available_drivers_adpt;
+    driver_Info_Model driver_info_model;
+    List<driver_Info_Model> driver_info_modelList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,12 +138,20 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         //ButterKnife.bind(this);
         checkPermissions();
 
+        //firebase initialization
+        FirebaseApp.initializeApp(getApplicationContext());
+        database = FirebaseDatabase.getInstance();
+
         //init Views
         open_drawer = findViewById(R.id.open_drawer);
         edt_to_destination = findViewById(R.id.edt_to_destination);
         bottom_sheet=findViewById(R.id.bottom);
         mbottomSheetBehavior=BottomSheetBehavior.from(bottom_sheet);
         mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+        rec_btsheet = findViewById(R.id.rec_btsheet);
+        rec_btsheet.setHasFixedSize(true);
+        rec_btsheet.setLayoutManager(new LinearLayoutManager(this));
 
 
 
@@ -213,6 +243,63 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         }
         });
 
+        GetAvailableDrivers();
+    }
+
+    private void GetAvailableDrivers() {
+
+
+
+        reference = FirebaseDatabase.getInstance().getReference().child("Nearby_drivers");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    if (dataSnapshot.hasChildren()){
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        String id = snapshot.child("id").getValue().toString();
+                        Double lat = Double.valueOf(snapshot.child("lat").getValue().toString());
+                        Double lng = Double.valueOf(snapshot.child("lng").getValue().toString());
+                        //Toast.makeText(Home_Maps_Activity.this, ""+id, Toast.LENGTH_SHORT).show();
+                        reference = FirebaseDatabase.getInstance().getReference().child("Users");
+                        reference.child("Drivers").child(id).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()){
+                                    if (dataSnapshot.hasChildren()){
+                                        String email = dataSnapshot.child("email").getValue().toString();
+                                        String full_name = dataSnapshot.child("full_name").getValue().toString();
+                                        String phone_no = dataSnapshot.child("phone_no").getValue().toString();
+                                        String driver_image = dataSnapshot.child("driver_image").getValue().toString();
+                                        String device_Tokens = dataSnapshot.child("device_Tokens").getValue().toString();
+                                        String CarNumber = dataSnapshot.child("CarNumber").getValue().toString();
+                                        String CarModel = dataSnapshot.child("CarModel").getValue().toString();
+
+                                        driver_info_model = new driver_Info_Model(id,lat,lng,full_name,phone_no,driver_image,CarModel,CarNumber,device_Tokens);
+                                        driver_info_modelList = new ArrayList<>();
+                                        driver_info_modelList.add(driver_info_model);
+                                        available_drivers_adpt = new available_drivers_adpt(Home_Maps_Activity.this,driver_info_modelList);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                     }
+                    }
+                }
+                rec_btsheet.setAdapter(available_drivers_adpt);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -364,6 +451,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                                     edt_to_destination.setVisibility(View.GONE);
                                     mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
                                     mMap.addMarker(new MarkerOptions().position(placelatlng).title("destination").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
+                                    GetAvailableDrivers();
                                 }catch(Exception e){
                                     Log.e("Error", "Error: " + e.toString());
                                 }
