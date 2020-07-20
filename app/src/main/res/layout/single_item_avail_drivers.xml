@@ -7,6 +7,8 @@
     app:cardMaxElevation="8dp"
     app:cardCornerRadius="13dp"
     android:layout_margin="10dp"
+    android:elevation="20dp"
+    app:cardElevation="10dp"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +19,7 @@
             android:id="@+id/driver_img"
             android:layout_width="100dp"
             android:layout_height="150dp"
-            android:src="@drawable/flag_egypt"
+            android:src="@drawable/ic_baseline_account_circle_24"
             android:elevation="5dp"/>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -41,18 +43,19 @@
                 android:layout_centerVertical="true"
                 android:layout_above="@+id/request_btn"
                 android:layout_marginBottom="5dp"
+                android:layout_below="@+id/txt_driver_name"
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Available"
-                    android:textSize="18sp"/>
+                    android:textSize="16sp"/>
                 <TextView
                     android:id="@+id/txt_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="20 km"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:layout_marginLeft="30dp"
                     />
             </LinearLayout>

@@ -20,7 +20,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.Splash_Screen_Activity"
+        <activity android:name=".ui.UI_Activity"/>
+        <activity android:name=".ui.Login_Activity" />
+        <activity android:name=".ui.Welcome_Activity" />
+        <activity
+            android:name=".ui.Payment_Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.Splash_Screen_Activity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,10 +35,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.Wallet_Activity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.Settings_Activity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.Wallet_Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.Settings_Activity"
+            android:screenOrientation="portrait" />
+
+        <receiver android:name=".Services.Fcm.MyReceiver" />
+
+        <service android:name=".Services.Fcm.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".Services.Fcm.MyFirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -42,11 +64,16 @@
         -->
         <activity
             android:name=".Maps.Home_Maps_Activity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.Signup"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.Signup"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.TripsActiviy"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

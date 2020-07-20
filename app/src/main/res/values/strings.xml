@@ -9,6 +9,10 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+
+    <!-- HomeMaps_Activity -->
+    <string name="where_to_go_w">Where to go?</string>
+
     <!-- Nav Header -->
     <string name="nav_trips_w">Your Trips</string>
     <string name="nav_wallet_w">Wallet</string>
@@ -25,15 +29,37 @@
     <string name="city_w">City</string>
     <string name="Language_w">Language</string>
     <string name="Sign_out_w">Sign out</string>
+    <string name="City_w">Cairo</string>
 
     <!-- Language -->
     <string name="english_w">English</string>
     <string name="arabic_w">عربي</string>
 
     <array name="arr_lang">
+        <item>select language</item>
         <item>العربية</item>
         <item>English</item>
     </array>
 
+    <!-- Payment Activity -->
+    <string name="payment_method_w">Payment Methods</string>
+    <string name="cash_w">Cash</string>
+    <string name="add_payment_method_w">Add Payment Method</string>
+
+
+    <string name="slide_1_title">Hello Food!</string>
+    <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
+
+    <string name="slide_2_title">Movie Tickets</string>
+    <string name="slide_2_desc">Book movie tickets for your family and friends!</string>
+
+    <string name="slide_3_title">Great Discounts</string>
+    <string name="slide_3_desc">Best discounts on every single service we offer!</string>
+
+    <string name="slide_4_title">World Travel</string>
+    <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
 
 </resources>

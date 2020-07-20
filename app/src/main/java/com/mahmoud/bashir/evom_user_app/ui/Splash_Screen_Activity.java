@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.mahmoud.bashir.evom_user_app.Maps.Home_Maps_Activity;
@@ -20,6 +21,8 @@ public class Splash_Screen_Activity extends AppCompatActivity {
     private Handler handler = new Handler();
     @BindView(R.id.circularProgressbar)
     ProgressBar mProgress;
+    @BindView(R.id.img)
+    ImageView img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +33,26 @@ public class Splash_Screen_Activity extends AppCompatActivity {
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        new Thread(new Runnable() {
+
+
+        img.animate().alpha(4000).setDuration(0);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                        Intent i = new Intent(Splash_Screen_Activity.this,Welcome_Activity.class);
+                        //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(i);
+                        finish();
+
+
+            }
+        },4000);
+
+
+
+       /* new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -45,7 +67,7 @@ public class Splash_Screen_Activity extends AppCompatActivity {
                             // TODO Auto-generated method stub
                             mProgress.setProgress(pStatus);
                             if (pStatus==100){
-                                Intent i = new Intent(Splash_Screen_Activity.this,Home_Maps_Activity.class);
+                                Intent i = new Intent(Splash_Screen_Activity.this,Welcome_Activity.class);
                                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(i);
                                 finish();
@@ -61,6 +83,6 @@ public class Splash_Screen_Activity extends AppCompatActivity {
                     }
                 }
             }
-        }).start();
+        }).start();*/
     }
 }

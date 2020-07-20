@@ -20,11 +20,9 @@
     <string name="nav_trips_w">رحلاتك</string>
     <string name="nav_wallet_w">محفظة</string>
     <string name="nav_payment_w">الدفع</string>
-    <string name="nav_packages_w">Packages</string>
+    <string name="nav_packages_w">العروض</string>
     <string name="nav_settings_w">الاعدادات</string>
     <string name="nav_help_w">مساعدة</string>
-    <string name="City_w">القاهرة</string>
-
 
 
     <!-- Settings -->
@@ -35,6 +33,7 @@
     <string name="city_w">المدينة</string>
     <string name="Language_w">اللغة</string>
     <string name="Sign_out_w">تسجيل الخروج</string>
+    <string name="City_w">القاهرة</string>
 
     <!-- Language -->
     <string name="english_w">English</string>
@@ -44,5 +43,27 @@
     <string name="payment_method_w">طرق الدفع</string>
     <string name="cash_w">كاش</string>
     <string name="add_payment_method_w">اضافة وسيلة دفع</string>
+
+
+
+
+
+
+
+    <string name="slide_1_title">Hello Food!</string>
+    <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
+
+    <string name="slide_2_title">Movie Tickets</string>
+    <string name="slide_2_desc">Book movie tickets for your family and friends!</string>
+
+    <string name="slide_3_title">Great Discounts</string>
+    <string name="slide_3_desc">Best discounts on every single service we offer!</string>
+
+    <string name="slide_4_title">World Travel</string>
+    <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
+
 
 </resources>

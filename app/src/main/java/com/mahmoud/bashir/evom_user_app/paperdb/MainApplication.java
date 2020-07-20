@@ -3,7 +3,8 @@ package com.mahmoud.bashir.evom_user_app.paperdb;
 import android.app.Application;
 import android.content.Context;
 
-import com.mahmoud.bashir.evomdriverapp.paperdb.helper.LocaleHelper;
+import com.mahmoud.bashir.evom_user_app.paperdb.helper.LocaleHelper;
+
 
 public class MainApplication extends Application {
 

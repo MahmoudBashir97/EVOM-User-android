@@ -6,12 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mahmoud.bashir.evom_user_app.R;
 import com.mahmoud.bashir.evom_user_app.pojo.driver_Info_Model;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -21,10 +23,12 @@ public class available_drivers_adpt extends RecyclerView.Adapter<available_drive
 
     Context context;
     List<driver_Info_Model> mlist;
+    RequestOnClickInterface requestOnClickInterface;
 
-    public available_drivers_adpt(Context context, List<driver_Info_Model> mlist) {
+    public available_drivers_adpt(Context context, List<driver_Info_Model> mlist,RequestOnClickInterface requestOnClickInterface) {
         this.context = context;
         this.mlist = mlist;
+        this.requestOnClickInterface = requestOnClickInterface;
     }
 
     @NonNull
@@ -38,6 +42,15 @@ public class available_drivers_adpt extends RecyclerView.Adapter<available_drive
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         driver_Info_Model m = mlist.get(position);
 
+        Picasso.get().load(m.getDriver_img()).into(holder.driver_img);
+        holder.request_btn.setOnClickListener(view -> {
+            Toast.makeText(context, "Requested!!!!!", Toast.LENGTH_SHORT).show();
+        });
+
+        holder.request_btn.setOnClickListener(view -> {
+            requestOnClickInterface.OnClick(position,m.getDriver_token());
+        });
+
     }
 
     @Override
@@ -45,7 +58,7 @@ public class available_drivers_adpt extends RecyclerView.Adapter<available_drive
         return mlist.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         CircleImageView driver_img;
         TextView txt_distance;
@@ -56,7 +69,6 @@ public class available_drivers_adpt extends RecyclerView.Adapter<available_drive
             driver_img = itemView.findViewById(R.id.driver_img);
             txt_distance = itemView.findViewById(R.id.txt_distance);
             request_btn = itemView.findViewById(R.id.request_btn);
-
         }
     }
 }

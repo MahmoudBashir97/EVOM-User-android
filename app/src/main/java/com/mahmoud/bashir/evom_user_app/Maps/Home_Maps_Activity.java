@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Camera;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -38,6 +39,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -51,12 +53,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mahmoud.bashir.evom_user_app.Adapters.RequestOnClickInterface;
 import com.mahmoud.bashir.evom_user_app.Adapters.available_drivers_adpt;
+import com.mahmoud.bashir.evom_user_app.Api_Interface.api_Interface;
 import com.mahmoud.bashir.evom_user_app.Maps.Direction_route.TaskLoadedCallback;
 import com.mahmoud.bashir.evom_user_app.R;
 import com.mahmoud.bashir.evom_user_app.loadingAlertdialog.LoadingDialog;
 import com.mahmoud.bashir.evom_user_app.pojo.driver_Info_Model;
+import com.mahmoud.bashir.evom_user_app.ui.Payment_Activity;
 import com.mahmoud.bashir.evom_user_app.ui.Settings_Activity;
+import com.mahmoud.bashir.evom_user_app.ui.TripsActiviy;
 import com.mahmoud.bashir.evom_user_app.ui.Wallet_Activity;
 import com.sucho.placepicker.AddressData;
 import com.sucho.placepicker.Constants;
@@ -67,12 +73,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyCallback,NavigationView.OnNavigationItemSelectedListener
     , GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         com.google.android.gms.location.LocationListener ,
-        TaskLoadedCallback {
+        TaskLoadedCallback ,
+        RequestOnClickInterface {
 
     private static final String TAG = "Home_Maps_Activity";
     private GoogleMap mMap , DMap;
@@ -91,7 +101,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
     ImageView open_drawer;
     TextView nav_trips,nav_wallet,nav_payment,nav_packages,nav_settings;
     View bottom_sheet;
-    RecyclerView rec_btsheet;
+    RecyclerView rec_btsheet,rec_available_drivers;
 
     int PLACE_PICKER_REQUEST = 1;
     Intent nt;
@@ -123,6 +133,23 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
     driver_Info_Model driver_info_model;
     List<driver_Info_Model> driver_info_modelList;
 
+
+    LatLng driver_latlng;
+
+
+
+
+    //FCM section
+    final private String FCM_API = "https://fcm.googleapis.com/fcm/send";
+    final private String serverKey = "key=" + "AAAAWgnVk88:APA91bFtPXAiE9tx8V_SmqGvxj36-sLpniex0SpoacQvejdBDVRSLFvK_NOH2bKV-H9pB6H3QZkzCbylCX-B-CWgxTj5dWRst6uhB8Fi7GZI1xXFAtfs_RyMfOY-1zHmHDnRlQ0vBAzP";
+    final private String contentType = "application/json";
+    final String TAGI = "NOTIFICATION TAG";
+    String BaseURL="https://fcm.googleapis.com/";
+    String driver_device_Token;
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,18 +168,22 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         //firebase initialization
         FirebaseApp.initializeApp(getApplicationContext());
         database = FirebaseDatabase.getInstance();
+        reference = FirebaseDatabase.getInstance().getReference().child("Nearby_drivers");
+
+
 
         //init Views
         open_drawer = findViewById(R.id.open_drawer);
         edt_to_destination = findViewById(R.id.edt_to_destination);
-        bottom_sheet=findViewById(R.id.bottom);
+       /* bottom_sheet=findViewById(R.id.bottom);
         mbottomSheetBehavior=BottomSheetBehavior.from(bottom_sheet);
-        mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
 
-        rec_btsheet = findViewById(R.id.rec_btsheet);
-        rec_btsheet.setHasFixedSize(true);
-        rec_btsheet.setLayoutManager(new LinearLayoutManager(this));
-
+        rec_available_drivers = findViewById(R.id.rec_available_drivers);
+        rec_available_drivers.setHasFixedSize(true);
+        LinearLayoutManager horizontalLayoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rec_available_drivers.setLayoutManager(horizontalLayoutManager);
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -165,7 +196,8 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         nav_packages =headerView.findViewById(R.id.nav_packages);
         nav_settings =headerView.findViewById(R.id.nav_settings);
         nav_trips.setOnClickListener(view -> {
-            Toast.makeText(this, "yrysgfdhjtyyhj", Toast.LENGTH_SHORT).show();
+            nt = new Intent(Home_Maps_Activity.this, TripsActiviy.class);
+            startActivity(nt);
             drawer.closeDrawer(GravityCompat.START);
         });
         nav_wallet.setOnClickListener(view -> {
@@ -174,7 +206,8 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
             drawer.closeDrawer(GravityCompat.START);
         });
         nav_payment.setOnClickListener(view -> {
-            Toast.makeText(this, "payment", Toast.LENGTH_SHORT).show();
+            nt = new Intent(Home_Maps_Activity.this, Payment_Activity.class);
+            startActivity(nt);
             drawer.closeDrawer(GravityCompat.START);
         });
         nav_packages.setOnClickListener(view -> {
@@ -182,7 +215,8 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
             drawer.closeDrawer(GravityCompat.START);
         });
         nav_settings.setOnClickListener(view -> {
-            startActivity(new Intent(Home_Maps_Activity.this, Settings_Activity.class));
+            nt = new Intent(Home_Maps_Activity.this, Settings_Activity.class);
+            startActivity(nt);
             drawer.closeDrawer(GravityCompat.START);
         });
 
@@ -243,14 +277,10 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         }
         });
 
-        GetAvailableDrivers();
+       GetAvailableDrivers();
     }
 
     private void GetAvailableDrivers() {
-
-
-
-        reference = FirebaseDatabase.getInstance().getReference().child("Nearby_drivers");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -261,7 +291,10 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                         String id = snapshot.child("id").getValue().toString();
                         Double lat = Double.valueOf(snapshot.child("lat").getValue().toString());
                         Double lng = Double.valueOf(snapshot.child("lng").getValue().toString());
-                        //Toast.makeText(Home_Maps_Activity.this, ""+id, Toast.LENGTH_SHORT).show();
+
+                        driver_latlng = new LatLng(lat,lng);
+
+
                         reference = FirebaseDatabase.getInstance().getReference().child("Users");
                         reference.child("Drivers").child(id).addValueEventListener(new ValueEventListener() {
                             @Override
@@ -279,9 +312,12 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                                         driver_info_model = new driver_Info_Model(id,lat,lng,full_name,phone_no,driver_image,CarModel,CarNumber,device_Tokens);
                                         driver_info_modelList = new ArrayList<>();
                                         driver_info_modelList.add(driver_info_model);
-                                        available_drivers_adpt = new available_drivers_adpt(Home_Maps_Activity.this,driver_info_modelList);
+                                        //Toast.makeText(Home_Maps_Activity.this, ""+driver_info_modelList.get(0).getId(), Toast.LENGTH_SHORT).show();
+                                        available_drivers_adpt = new available_drivers_adpt(Home_Maps_Activity.this,driver_info_modelList,Home_Maps_Activity.this);
+                                        rec_available_drivers.setAdapter(available_drivers_adpt);
                                     }
                                 }
+
                             }
 
                             @Override
@@ -292,7 +328,6 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                      }
                     }
                 }
-                rec_btsheet.setAdapter(available_drivers_adpt);
             }
 
             @Override
@@ -403,7 +438,22 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
         if (dest_lat != null){
             placelatlng= new LatLng(dest_lat,dest_lng);
-            mMap.addMarker(new MarkerOptions().position(placelatlng).title("destination").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
+            mMap.addMarker(new MarkerOptions().position(placelatlng).title("destination").icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)));
+        }
+        if (driver_latlng != null){
+
+
+            mMap.addMarker(new MarkerOptions().position(driver_latlng).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_vehicle_icon_black)));
+
+
+            CameraPosition cameraPosition = mMap.getCameraPosition();
+            Toast.makeText(this, ""+cameraPosition.bearing + " " + cameraPosition.tilt, Toast.LENGTH_SHORT).show();
+            CameraPosition newpos = new CameraPosition(
+                    cameraPosition.target,
+                    cameraPosition.zoom,
+                    cameraPosition.tilt,
+                    cameraPosition.bearing);
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(newpos));
         }
        // track_curLocation();
     }
@@ -435,7 +485,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                     dest_lat = addressData.getLatitude();
                     dest_lng = addressData.getLongitude();
                     if (dest_lat != null){
-                        bottom_sheet.setVisibility(View.VISIBLE);
+                        rec_available_drivers.setVisibility(View.VISIBLE);
                         loadingDialog.startLoadingDialog();
                         timer = new CountDownTimer(2000, 500) {
 
@@ -449,16 +499,15 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                                 try{
                                     loadingDialog.dismissDialog();
                                     edt_to_destination.setVisibility(View.GONE);
-                                    mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+                                  //  mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
                                     mMap.addMarker(new MarkerOptions().position(placelatlng).title("destination").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
-                                    GetAvailableDrivers();
+                                    //GetAvailableDrivers();
                                 }catch(Exception e){
                                     Log.e("Error", "Error: " + e.toString());
                                 }
                             }
                         }.start();
                     }
-
                 } catch (Exception e) {
                     Log.e("MainActivity", e.getMessage());
                 }
@@ -569,4 +618,35 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
     }
 
 
+    @Override
+    public void OnClick(int pos,String token) {
+        Toast.makeText(this, ""+token, Toast.LENGTH_SHORT).show();
+
+        Retrofit retrofit=new Retrofit.Builder()
+                .baseUrl(BaseURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        api_Interface iterfaceCall=retrofit.create(api_Interface.class);
+
+        /*
+         data stored=new data(messageSenderID,myname,messageRecieverID,messageText,messageRecieverImage ,""+countbadge,"message");
+            send data_send=new send(user_Token,stored);
+            Call<send> sendCall=iterfaceCall.storedata(data_send);
+            sendCall.enqueue(new Callback<send>() {
+                @Override
+                public void onResponse(Call<send> call, retrofit2.Response<send> response) {
+
+                    send sendResponse = response.body();
+                    Log.e("send", "sendResponse --> " + sendResponse);
+                    // Toast.makeText(Chat_Activity.this, "sent"+sendResponse.getTo(), Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(Call<send> call, Throwable t) {
+                    Toast.makeText(Chat_Activity.this, ""+t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+         */
+    }
 }
