@@ -4,13 +4,17 @@ public class UsersInfo {
     String id;
     String name;
     String email;
+    String password;
     String phone;
+    String deviceToken;
 
-    public UsersInfo(String id ,String name, String email, String phone) {
+    public UsersInfo(String id, String name, String email,String password,String phone, String deviceToken) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
         this.phone = phone;
+        this.deviceToken = deviceToken;
     }
 
     public String getId() {
@@ -23,6 +27,14 @@ public class UsersInfo {
 
     public String getName() {
         return name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setName(String name) {
@@ -43,5 +55,13 @@ public class UsersInfo {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 }

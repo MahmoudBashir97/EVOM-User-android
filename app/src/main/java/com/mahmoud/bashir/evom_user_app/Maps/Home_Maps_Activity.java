@@ -25,8 +25,11 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +61,7 @@ import com.mahmoud.bashir.evom_user_app.Adapters.available_drivers_adpt;
 import com.mahmoud.bashir.evom_user_app.Api_Interface.api_Interface;
 import com.mahmoud.bashir.evom_user_app.Maps.Direction_route.TaskLoadedCallback;
 import com.mahmoud.bashir.evom_user_app.R;
+import com.mahmoud.bashir.evom_user_app.Storage.SharedPrefranceManager;
 import com.mahmoud.bashir.evom_user_app.loadingAlertdialog.LoadingDialog;
 import com.mahmoud.bashir.evom_user_app.pojo.driver_Info_Model;
 import com.mahmoud.bashir.evom_user_app.ui.Payment_Activity;
@@ -99,9 +103,10 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
     //initviews
     EditText edt_to_destination;
     ImageView open_drawer;
-    TextView nav_trips,nav_wallet,nav_payment,nav_packages,nav_settings;
+    TextView nav_user_name,nav_trips,nav_wallet,nav_payment,nav_packages,nav_settings;
     View bottom_sheet;
     RecyclerView rec_btsheet,rec_available_drivers;
+    RelativeLayout rel_dest;
 
     int PLACE_PICKER_REQUEST = 1;
     Intent nt;
@@ -141,7 +146,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
 
     //FCM section
     final private String FCM_API = "https://fcm.googleapis.com/fcm/send";
-    final private String serverKey = "key=" + "AAAAWgnVk88:APA91bFtPXAiE9tx8V_SmqGvxj36-sLpniex0SpoacQvejdBDVRSLFvK_NOH2bKV-H9pB6H3QZkzCbylCX-B-CWgxTj5dWRst6uhB8Fi7GZI1xXFAtfs_RyMfOY-1zHmHDnRlQ0vBAzP";
+    final private String serverKey = "key=" + "AAAAWTfqi_A:APA91bHiuXVv9PZxm24FNqKLHN1Te6qz4OH9KsgJ9Vdzv-BoA-rrc8Sow2mo0E4AFHPbBamwgugD7vczzur1S-n1vKN58QbWMrXgBXHmb1osHnZbpX82ThaE7SP_n2wohQH67vx9c_Ma";
     final private String contentType = "application/json";
     final String TAGI = "NOTIFICATION TAG";
     String BaseURL="https://fcm.googleapis.com/";
@@ -149,6 +154,8 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
 
 
 
+    //animation
+    Animation topAnim,bottomAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +166,16 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+
+
+
+
+        topAnim = AnimationUtils.loadAnimation(this,R.anim.top_animation);
+        bottomAnim = AnimationUtils.loadAnimation(this,R.anim.bottom_animation);
+
+
 
         loadingDialog=new LoadingDialog(this);
 
@@ -175,6 +192,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         //init Views
         open_drawer = findViewById(R.id.open_drawer);
         edt_to_destination = findViewById(R.id.edt_to_destination);
+        edt_to_destination.setAnimation(topAnim);
        /* bottom_sheet=findViewById(R.id.bottom);
         mbottomSheetBehavior=BottomSheetBehavior.from(bottom_sheet);
         mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
@@ -190,11 +208,15 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
+        nav_user_name =headerView.findViewById(R.id.nav_user_name);
         nav_trips =headerView.findViewById(R.id.nav_trips);
         nav_wallet =headerView.findViewById(R.id.nav_wallet);
         nav_payment =headerView.findViewById(R.id.nav_payment);
         nav_packages =headerView.findViewById(R.id.nav_packages);
         nav_settings =headerView.findViewById(R.id.nav_settings);
+
+        nav_user_name.setText(SharedPrefranceManager.getInastance(Home_Maps_Activity.this).getUsername());
+
         nav_trips.setOnClickListener(view -> {
             nt = new Intent(Home_Maps_Activity.this, TripsActiviy.class);
             startActivity(nt);
@@ -446,14 +468,14 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
             mMap.addMarker(new MarkerOptions().position(driver_latlng).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_vehicle_icon_black)));
 
 
-            CameraPosition cameraPosition = mMap.getCameraPosition();
+           /* CameraPosition cameraPosition = mMap.getCameraPosition();
             Toast.makeText(this, ""+cameraPosition.bearing + " " + cameraPosition.tilt, Toast.LENGTH_SHORT).show();
             CameraPosition newpos = new CameraPosition(
                     cameraPosition.target,
                     cameraPosition.zoom,
                     cameraPosition.tilt,
                     cameraPosition.bearing);
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(newpos));
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(newpos));*/
         }
        // track_curLocation();
     }

@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.mahmoud.bashir.evom_user_app.Maps.Home_Maps_Activity;
 import com.mahmoud.bashir.evom_user_app.R;
@@ -23,6 +26,10 @@ public class Splash_Screen_Activity extends AppCompatActivity {
     ProgressBar mProgress;
     @BindView(R.id.img)
     ImageView img;
+    @BindView(R.id.txt_bottom)
+    TextView txt_bottom;
+
+    Animation topAnim,bottomAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,12 @@ public class Splash_Screen_Activity extends AppCompatActivity {
 
 
         img.animate().alpha(4000).setDuration(0);
+
+        topAnim = AnimationUtils.loadAnimation(this,R.anim.top_animation);
+        bottomAnim = AnimationUtils.loadAnimation(this,R.anim.bottom_animation);
+
+        img.setAnimation(topAnim);
+        txt_bottom.setAnimation(bottomAnim);
 
         handler.postDelayed(new Runnable() {
             @Override

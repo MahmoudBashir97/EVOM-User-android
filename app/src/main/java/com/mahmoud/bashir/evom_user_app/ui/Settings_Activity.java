@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mahmoud.bashir.evom_user_app.R;
+import com.mahmoud.bashir.evom_user_app.Storage.SharedPrefranceManager;
 import com.mahmoud.bashir.evom_user_app.paperdb.helper.LocaleHelper;
 
 import java.util.Locale;
@@ -47,10 +49,20 @@ public class Settings_Activity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 
 
+        txt_fname.setText(SharedPrefranceManager.getInastance(this).getUsername());
+        txtphonenumber.setText(SharedPrefranceManager.getInastance(this).getUserPhone());
+        txt_email.setText(SharedPrefranceManager.getInastance(this).getUserEmail());
+
 
         //to Sign Out
         txt_signOut.setOnClickListener(view -> {
-            Toast.makeText(this, "OUT!!!", Toast.LENGTH_SHORT).show();
+
+
+            Intent i = new Intent(Settings_Activity.this,Login_Activity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+            finish();
+            SharedPrefranceManager.getInastance(Settings_Activity.this).clearUser();
         });
 
 
