@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mahmoud.bashir.evom_user_app.Adapters.V_Pager_adpt;
 import com.mahmoud.bashir.evom_user_app.Maps.Home_Maps_Activity;
@@ -32,7 +33,9 @@ public class Welcome_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (SharedPrefranceManager.getInastance(this).isFirstOne()){
+
+
+        if (SharedPrefranceManager.getInastance(this).isFirstOne() == true){
             startActivity(new Intent(this,Login_Activity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();
         }
@@ -82,11 +85,11 @@ public class Welcome_Activity extends AppCompatActivity {
 
     private void launchHomeScreen() {
 
+        SharedPrefranceManager.getInastance(this).wlecomeUser();
         Intent i = new Intent(Welcome_Activity.this, Login_Activity.class);
         startActivity(i);
         finish();
 
-        SharedPrefranceManager.getInastance(this).wlecomeUser();
     }
 
     private int getItem(int i) {

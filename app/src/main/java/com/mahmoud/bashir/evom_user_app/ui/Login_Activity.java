@@ -143,12 +143,14 @@ public class Login_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         if(SharedPrefranceManager.getInastance(this).isLoggedIn()){
             startActivity(new Intent(this,Home_Maps_Activity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();
         }
 
         setContentView(R.layout.activity_login_);
+
 
 
         ButterKnife.bind(this);
@@ -166,7 +168,7 @@ public class Login_Activity extends AppCompatActivity {
 
         //Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        CUID = mAuth.getCurrentUser().getUid();
+       // CUID = mAuth.getCurrentUser().getUid();
 
         txt_enter_ph.setOnClickListener(view -> {
 
@@ -268,7 +270,7 @@ public class Login_Activity extends AppCompatActivity {
                     }else {
                         String Code = otpView.getText().toString();
                         verifycode(Code, full_phone);
-                        Toast.makeText(this, ""+full_phone, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, ""+full_phone, Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -319,7 +321,7 @@ public class Login_Activity extends AppCompatActivity {
             }else {
                 HashMap<String,Object> map = new HashMap<>();
                 map.put("password",edt_confirm_new_pass.getText().toString());
-                send_user_info_to_databaserealtime.child(CUID).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                send_user_info_to_databaserealtime.child(full_phone).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
@@ -366,9 +368,29 @@ public class Login_Activity extends AppCompatActivity {
         });
 }
 
+
+public void getCUID (){
+        DatabaseReference  ref ;
+        ref = FirebaseDatabase.getInstance().getReference().child("register");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren() && dataSnapshot.exists()){
+                    String log = dataSnapshot.child("log").toString();
+                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                    CUID = firebaseUser.getUid();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+}
     private void signIn_existing(String full_phone, String p_ass) {
 
-        send_user_info_to_databaserealtime.child(CUID).addValueEventListener(new ValueEventListener() {
+        send_user_info_to_databaserealtime.child(full_phone).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.hasChildren()){
@@ -378,7 +400,7 @@ public class Login_Activity extends AppCompatActivity {
 
                         String name = dataSnapshot.child("name").getValue().toString();
                         String email = dataSnapshot.child("email").getValue().toString();
-                        String id = dataSnapshot.child("id").getValue().toString();
+                        CUID = dataSnapshot.child("id").getValue().toString();
                         String phone = dataSnapshot.child("phone").getValue().toString();
                         String deviceToken = dataSnapshot.child("deviceToken").getValue().toString();
 
@@ -503,6 +525,7 @@ public class Login_Activity extends AppCompatActivity {
                             user_email = account.getEmail();
                             root = "from google";
 
+
                             prog_bar.setVisibility(View.GONE);
 
                             //social visibility
@@ -573,7 +596,7 @@ public class Login_Activity extends AppCompatActivity {
                                  intent.putExtra("deviceToken",deviceToken);
 
                                  usersInfo = new UsersInfo(CUID,user_name,user_email,null,phone,deviceToken);
-                                 send_user_info_to_databaserealtime.child(CUID).setValue(usersInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                 send_user_info_to_databaserealtime.child(phone).setValue(usersInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                                      @Override
                                      public void onComplete(@NonNull Task<Void> task) {
                                          intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -631,6 +654,13 @@ public class Login_Activity extends AppCompatActivity {
         }
     };
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //getCUID();
+    }
+
     private Animation inFromRightAnimation() {
 
         Animation inFromRight = new TranslateAnimation(
@@ -677,4 +707,6 @@ public class Login_Activity extends AppCompatActivity {
         outtoRight.setInterpolator(new AccelerateInterpolator());
         return outtoRight;
     }
+
+
 }

@@ -98,7 +98,7 @@ public class Verify_phone_Activity extends AppCompatActivity {
                                             phone,
                                             deviceToken);
 
-                                    reference.child(CUID).setValue(usersInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    reference.child(phone).setValue(usersInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
 
@@ -108,7 +108,7 @@ public class Verify_phone_Activity extends AppCompatActivity {
                                             SharedPrefranceManager.getInastance(Verify_phone_Activity.this).saveUser(edt_usenName.getText().toString(),
                                                     edt_usenEmail.getText().toString(),phone,deviceToken);
                                         }
-                                    });
+            });
             }
         });
 

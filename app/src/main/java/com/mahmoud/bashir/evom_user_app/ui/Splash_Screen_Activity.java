@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.mahmoud.bashir.evom_user_app.Maps.Home_Maps_Activity;
 import com.mahmoud.bashir.evom_user_app.R;
+import com.mahmoud.bashir.evom_user_app.Storage.SharedPrefranceManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +59,7 @@ public class Splash_Screen_Activity extends AppCompatActivity {
                         //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(i);
                         finish();
+
 
 
             }

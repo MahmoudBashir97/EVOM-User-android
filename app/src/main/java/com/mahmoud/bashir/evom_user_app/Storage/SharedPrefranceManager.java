@@ -26,7 +26,7 @@ public class SharedPrefranceManager {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_USER, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.clear();
+
 
         editor.putString("userName", username);
         editor.putString("userEmail", useremail);
@@ -35,18 +35,19 @@ public class SharedPrefranceManager {
 
 
         editor.putBoolean("userLogged", true);
-
+        editor.commit();
         editor.apply();
     }
 
     public void wlecomeUser(){
+
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_USER, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.clear();
+
 
         editor.putBoolean("WelcomeMessage", true);
-
+        editor.commit();
         editor.apply();
 
     }
