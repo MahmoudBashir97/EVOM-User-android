@@ -34,8 +34,8 @@ public class V_Pager_adpt extends PagerAdapter {
     };
 
     public String[] texts = {
-      "EVOM will deliver you inside Cairo ",
-            "With EVOM ,\nu will not be late to ur work",
+      "DEVOM will deliver you inside Cairo ",
+            "With DEVOM ,\nu will not be late to ur work",
       "Mark your destination , start your trip",
 
     };

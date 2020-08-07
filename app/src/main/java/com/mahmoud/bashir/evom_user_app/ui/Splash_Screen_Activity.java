@@ -59,9 +59,6 @@ public class Splash_Screen_Activity extends AppCompatActivity {
                         //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(i);
                         finish();
-
-
-
             }
         },4000);
 

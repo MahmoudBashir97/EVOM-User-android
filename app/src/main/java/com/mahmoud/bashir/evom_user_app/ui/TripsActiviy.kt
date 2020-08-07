@@ -146,7 +146,7 @@ class RecyclerAdapter(val mlist : ArrayList<trip_details_Model> = ArrayList<trip
 
         var result = ""
 
-        var lang = ""
+        var lang = "en"
 
 
         if (Paper.book().read<String>("language").equals("ar")){
@@ -165,7 +165,7 @@ class RecyclerAdapter(val mlist : ArrayList<trip_details_Model> = ArrayList<trip
         try {
             val listAddresses: List<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
             if (null != listAddresses && listAddresses.size > 0) {
-                val _Location: String = listAddresses[0].getAddressLine(0)
+                //val _Location: String = listAddresses[0].getAddressLine(0)
                 // Log.i("_Location = ", "" + _Location);
                 val address: Address = listAddresses[0]
                 Log.i("address = ", "" + address)
