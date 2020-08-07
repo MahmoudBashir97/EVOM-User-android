@@ -42,13 +42,23 @@ public class available_drivers_adpt extends RecyclerView.Adapter<available_drive
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         driver_Info_Model m = mlist.get(position);
 
+        holder.txt_driver_name.setText(m.getDriver_name());
         Picasso.get().load(m.getDriver_img()).into(holder.driver_img);
         holder.request_btn.setOnClickListener(view -> {
             Toast.makeText(context, "Requested!!!!!", Toast.LENGTH_SHORT).show();
         });
 
         holder.request_btn.setOnClickListener(view -> {
-            requestOnClickInterface.OnClick(position,m.getDriver_token());
+            requestOnClickInterface.OnClick(position,
+                    m.getDriver_name(),
+                    m.getDriver_img(),
+                    m.getDriver_ph(),
+                    m.getDriver_token(),
+                    m.getId(),
+                    m.getCar_Number(),
+                    m.getCar_Model(),
+                    m.getDriver_lat(),
+                    m.getDriver_lng());
         });
 
     }
@@ -61,13 +71,14 @@ public class available_drivers_adpt extends RecyclerView.Adapter<available_drive
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         CircleImageView driver_img;
-        TextView txt_distance;
+        TextView txt_distance,txt_driver_name;
         Button request_btn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             driver_img = itemView.findViewById(R.id.driver_img);
             txt_distance = itemView.findViewById(R.id.txt_distance);
+            txt_driver_name = itemView.findViewById(R.id.txt_driver_name);
             request_btn = itemView.findViewById(R.id.request_btn);
         }
     }

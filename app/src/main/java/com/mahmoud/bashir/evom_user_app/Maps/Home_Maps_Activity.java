@@ -12,21 +12,32 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Camera;
+import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
+import android.provider.Settings;
+import android.service.autofill.Dataset;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -47,6 +58,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
@@ -61,22 +74,32 @@ import com.mahmoud.bashir.evom_user_app.Adapters.available_drivers_adpt;
 import com.mahmoud.bashir.evom_user_app.Api_Interface.api_Interface;
 import com.mahmoud.bashir.evom_user_app.Maps.Direction_route.TaskLoadedCallback;
 import com.mahmoud.bashir.evom_user_app.R;
+import com.mahmoud.bashir.evom_user_app.Services.Notification_Receiver;
 import com.mahmoud.bashir.evom_user_app.Storage.SharedPrefranceManager;
 import com.mahmoud.bashir.evom_user_app.loadingAlertdialog.LoadingDialog;
+import com.mahmoud.bashir.evom_user_app.pojo.SendRequest.data_request;
 import com.mahmoud.bashir.evom_user_app.pojo.driver_Info_Model;
 import com.mahmoud.bashir.evom_user_app.ui.Payment_Activity;
 import com.mahmoud.bashir.evom_user_app.ui.Settings_Activity;
 import com.mahmoud.bashir.evom_user_app.ui.TripsActiviy;
 import com.mahmoud.bashir.evom_user_app.ui.Wallet_Activity;
+import com.squareup.picasso.Picasso;
 import com.sucho.placepicker.AddressData;
 import com.sucho.placepicker.Constants;
 import com.sucho.placepicker.MapType;
 import com.sucho.placepicker.PlacePicker;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -102,11 +125,12 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
 
     //initviews
     EditText edt_to_destination;
-    ImageView open_drawer;
-    TextView nav_user_name,nav_trips,nav_wallet,nav_payment,nav_packages,nav_settings;
+    ImageView open_drawer,call_to_driver;
+    TextView nav_user_name,nav_trips,nav_wallet,nav_payment,nav_packages,nav_settings,txt_request_status,trip_price,distance_v,Number_Car,txt_dr_name;
     View bottom_sheet;
     RecyclerView rec_btsheet,rec_available_drivers;
-    RelativeLayout rel_dest;
+    RelativeLayout rel_dest,pending_rel,aft_rel,Info_dr_rel,cl_rel;
+    CircleImageView dr_img;
 
     int PLACE_PICKER_REQUEST = 1;
     Intent nt;
@@ -131,17 +155,18 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
 
 
     FirebaseDatabase database;
-    DatabaseReference reference;
+    DatabaseReference reference,request_ref;
     FirebaseAuth auth;
     String CUID;
     available_drivers_adpt available_drivers_adpt;
     driver_Info_Model driver_info_model;
     List<driver_Info_Model> driver_info_modelList;
 
-
     LatLng driver_latlng;
 
 
+
+    String request_st="",MyPhone="",Driver_id,My_InRequest="out";
 
 
     //FCM section
@@ -156,6 +181,11 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
 
     //animation
     Animation topAnim,bottomAnim;
+    AlarmManager manager;
+    Intent myintent;
+    PendingIntent pendingIntent;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,34 +199,48 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
 
 
 
-
-
-
         topAnim = AnimationUtils.loadAnimation(this,R.anim.top_animation);
         bottomAnim = AnimationUtils.loadAnimation(this,R.anim.bottom_animation);
 
-
-
         loadingDialog=new LoadingDialog(this);
 
-        //ButterKnife.bind(this);
+        checkGPSStatus();
         checkPermissions();
 
         //firebase initialization
         FirebaseApp.initializeApp(getApplicationContext());
         database = FirebaseDatabase.getInstance();
         reference = FirebaseDatabase.getInstance().getReference().child("Nearby_drivers");
+        request_ref = FirebaseDatabase.getInstance().getReference().child("Requests");
+        auth = FirebaseAuth.getInstance();
+        CUID = auth.getCurrentUser().getUid();
 
 
 
         //init Views
         open_drawer = findViewById(R.id.open_drawer);
         edt_to_destination = findViewById(R.id.edt_to_destination);
-        edt_to_destination.setAnimation(topAnim);
-       /* bottom_sheet=findViewById(R.id.bottom);
-        mbottomSheetBehavior=BottomSheetBehavior.from(bottom_sheet);
-        mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
+        aft_rel = findViewById(R.id.aft_rel);
+        Info_dr_rel = findViewById(R.id.Info_dr_rel);
+        dr_img = findViewById(R.id.dr_img);
+        txt_dr_name = findViewById(R.id.txt_dr_name);
+        call_to_driver = findViewById(R.id.call_to_driver);
+        Number_Car = findViewById(R.id.Number_Car);
+        distance_v = findViewById(R.id.distance_v);
+        trip_price = findViewById(R.id.trip_price);
+        pending_rel = findViewById(R.id.pending_rel);
+        cl_rel = findViewById(R.id.cl_rel);
+        txt_request_status = findViewById(R.id.txt_request_status);
 
+
+
+
+        //setAnimation
+        edt_to_destination.setAnimation(topAnim);
+
+
+
+        //recyclerView to view all available drivers
         rec_available_drivers = findViewById(R.id.rec_available_drivers);
         rec_available_drivers.setHasFixedSize(true);
         LinearLayoutManager horizontalLayoutManager
@@ -207,6 +251,8 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //init for Nav Header
         View headerView = navigationView.getHeaderView(0);
         nav_user_name =headerView.findViewById(R.id.nav_user_name);
         nav_trips =headerView.findViewById(R.id.nav_trips);
@@ -214,9 +260,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         nav_payment =headerView.findViewById(R.id.nav_payment);
         nav_packages =headerView.findViewById(R.id.nav_packages);
         nav_settings =headerView.findViewById(R.id.nav_settings);
-
         nav_user_name.setText(SharedPrefranceManager.getInastance(Home_Maps_Activity.this).getUsername());
-
         nav_trips.setOnClickListener(view -> {
             nt = new Intent(Home_Maps_Activity.this, TripsActiviy.class);
             startActivity(nt);
@@ -241,10 +285,13 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
             startActivity(nt);
             drawer.closeDrawer(GravityCompat.START);
         });
-
         open_drawer.setOnClickListener(view -> {
             drawer.open();
         });
+
+
+
+
 
         edt_to_destination.setOnClickListener(v -> {
             PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
@@ -299,7 +346,118 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         }
         });
 
+        MyPhone = SharedPrefranceManager.getInastance(this).getUserPhone();
+
+        //check if user related with request or not
+        CheckUserRequest(MyPhone);
+
        GetAvailableDrivers();
+    }
+
+    private void checkGPSStatus() {
+        LocationManager locationManager = null;
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        if ( locationManager == null ) {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        }
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex){}
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex){}
+        if ( !gps_enabled && !network_enabled ){
+            AlertDialog.Builder dialog = new AlertDialog.Builder(Home_Maps_Activity.this);
+            dialog.setMessage("GPS not enabled");
+            dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //this will navigate user to the device location settings screen
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            AlertDialog alert = dialog.create();
+            alert.show();
+        }
+    }
+
+    private void CheckUserRequest(String MyPhone) {
+
+        My_InRequest = SharedPrefranceManager.getInastance(this).getStateRequestInOut();
+        Driver_id = SharedPrefranceManager.getInastance(this).getDriverID();
+
+        if (My_InRequest.equals("out")){
+            pending_rel.setVisibility(View.GONE);
+        }else if (My_InRequest.equals("in")){
+            if (!Driver_id.equals("")) {
+                request_ref.child("Drivers").child(Driver_id).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists() && dataSnapshot.hasChildren()) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                String UserPhone = snapshot.child("phone").getValue().toString();
+
+                                if (MyPhone.equals(UserPhone)) {
+                                    //Toast.makeText(Home_Maps_Activity.this, ""+Driver_id, Toast.LENGTH_SHORT).show();
+                                    request_st = snapshot.child("requestStatus").getValue().toString();
+                                    SharedPrefranceManager.getInastance(Home_Maps_Activity.this).save_RequestState("in", request_st, Driver_id);
+
+                                    request_ref.child("Customers").child(MyPhone).child(Driver_id).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.exists() && dataSnapshot.hasChildren()) {
+
+
+                                                    //Toast.makeText(Home_Maps_Activity.this, "worked", Toast.LENGTH_LONG).show();
+
+                                                    String driverImage = dataSnapshot.child("driverImage").getValue().toString();
+                                                    String driverName = dataSnapshot.child("driverName").getValue().toString();
+                                                    String driverCarNumber = dataSnapshot.child("driverCarNumber").getValue().toString();
+                                                    String driverPhone = dataSnapshot.child("driverPhone").getValue().toString();
+
+                                                    dest_lat = Double.valueOf(dataSnapshot.child("dest_lat").getValue().toString());
+                                                    dest_lng = Double.valueOf(dataSnapshot.child("dest_lng").getValue().toString());
+
+
+                                                    edt_to_destination.setVisibility(View.GONE);
+                                                    rec_available_drivers.setVisibility(View.GONE);
+                                                    Info_dr_rel.setVisibility(View.VISIBLE);
+                                                    Info_dr_rel.setAnimation(topAnim);
+                                                    aft_rel.setVisibility(View.VISIBLE);
+                                                    aft_rel.setAnimation(inFromRightAnimation());
+
+                                                    Picasso.get().load(driverImage).into(dr_img);
+                                                    txt_dr_name.setText(driverName);
+                                                    Number_Car.setText(driverCarNumber);
+
+                                                    call_to_driver.setOnClickListener(view -> {
+                                                        dialContactPhone(driverPhone);
+                                                    });
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
     }
 
     private void GetAvailableDrivers() {
@@ -461,11 +619,60 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         if (dest_lat != null){
             placelatlng= new LatLng(dest_lat,dest_lng);
             mMap.addMarker(new MarkerOptions().position(placelatlng).title("destination").icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)));
+
+            request_st = SharedPrefranceManager.getInastance(Home_Maps_Activity.this).getRequestWaitingResponse();
+
+            if (request_st.equals("Pending")){
+
+
+                request_ref.child("Customers").child(MyPhone).child(Driver_id).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists() && dataSnapshot.hasChildren()) {
+                            request_st = dataSnapshot.child("requestStatus").getValue().toString();
+
+
+                            if(request_st.equals("accept")){
+
+                                txt_request_status.setText("accepted");
+                                cl_rel.setBackgroundColor(Color.RED);
+                                pending_rel.setVisibility(View.GONE);
+
+
+                            }else if (request_st.equals("reject")){
+                                SharedPrefranceManager.getInastance(Home_Maps_Activity.this).save_RequestState("out","","");
+                                request_st = "" ;
+                                txt_request_status.setText("rejected");
+                                cl_rel.setBackgroundColor(Color.RED);
+                                edt_to_destination.setAnimation(inFromLeftAnimation());
+                                edt_to_destination.setVisibility(View.VISIBLE);
+                                Info_dr_rel.setAnimation(outToRightAnimation());
+                                Info_dr_rel.setVisibility(View.GONE);
+                                aft_rel.setVisibility(View.GONE);
+                                pending_rel.setVisibility(View.GONE);
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+
+
         }
+
         if (driver_latlng != null){
 
 
             mMap.addMarker(new MarkerOptions().position(driver_latlng).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_vehicle_icon_black)));
+
+
+
 
 
            /* CameraPosition cameraPosition = mMap.getCameraPosition();
@@ -477,7 +684,6 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
                     cameraPosition.bearing);
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(newpos));*/
         }
-       // track_curLocation();
     }
 
 
@@ -641,34 +847,162 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
 
 
     @Override
-    public void OnClick(int pos,String token) {
-        Toast.makeText(this, ""+token, Toast.LENGTH_SHORT).show();
+    public void OnClick(int pos,String driverName,String driverImg,String driverPhone,String driverToken,String driverID,String driverCarNumber,String driverCarModel,double driver_lat,double driver_lng) {
 
-        Retrofit retrofit=new Retrofit.Builder()
+       /* Retrofit retrofit=new Retrofit.Builder()
                 .baseUrl(BaseURL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        api_Interface iterfaceCall=retrofit.create(api_Interface.class);
+        api_Interface iterfaceCall=retrofit.create(api_Interface.class);*/
 
-        /*
-         data stored=new data(messageSenderID,myname,messageRecieverID,messageText,messageRecieverImage ,""+countbadge,"message");
-            send data_send=new send(user_Token,stored);
-            Call<send> sendCall=iterfaceCall.storedata(data_send);
-            sendCall.enqueue(new Callback<send>() {
+        if (lastLocation != null && dest_lat != null ) {
+
+
+            // get current date and time with request
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = df.format(new Date());
+            // get User Data to send
+            String dToken = SharedPrefranceManager.getInastance(this).getUserToken();
+            String name = SharedPrefranceManager.getInastance(this).getUsername();
+            String phone = SharedPrefranceManager.getInastance(this).getUserPhone();
+
+            data_request data = new data_request(CUID, dToken, name, phone, lastLocation.getLatitude(), lastLocation.getLongitude(), dest_lat, dest_lng, date,"Pending");
+
+            //need to send request to firebase also
+            HashMap<String,Object> map = new HashMap<>();
+            map.put("driverId",driverID);
+            map.put("driverName",driverName);
+            map.put("driverPhone",driverPhone);
+            map.put("driverImage",driverImg);
+            map.put("driverCarNumber",driverCarNumber);
+            map.put("driverToken",dToken);
+            map.put("driver_lat",driver_lat);
+            map.put("driver_lng",driver_lng);
+            map.put("dest_lat",dest_lat);
+            map.put("dest_lng",dest_lng);
+            map.put("time",date);
+            map.put("requestStatus","Pending");
+
+           // double user_lat;
+            //double user_lng;
+
+            //added to User Database
+            request_ref.child("Customers").child(phone).child(driverID).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
-                public void onResponse(Call<send> call, retrofit2.Response<send> response) {
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
 
-                    send sendResponse = response.body();
-                    Log.e("send", "sendResponse --> " + sendResponse);
-                    // Toast.makeText(Chat_Activity.this, "sent"+sendResponse.getTo(), Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void onFailure(Call<send> call, Throwable t) {
-                    Toast.makeText(Chat_Activity.this, ""+t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
-         */
+
+            request_ref.child("Drivers").child(driverID).child(phone).setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+
+                        request_st = "Pending";
+                        My_InRequest = "in";
+                        Driver_id = driverID;
+
+                        SharedPrefranceManager.getInastance(Home_Maps_Activity.this).save_RequestState(My_InRequest,request_st,Driver_id);
+
+
+                        Toast.makeText(Home_Maps_Activity.this, "Request Sent Successfully", Toast.LENGTH_SHORT).show();
+
+                        edt_to_destination.setVisibility(View.GONE);
+                        rec_available_drivers.setVisibility(View.GONE);
+                        Info_dr_rel.setVisibility(View.VISIBLE);
+                        Info_dr_rel.setAnimation(topAnim);
+                        aft_rel.setVisibility(View.VISIBLE);
+                        pending_rel.setVisibility(View.VISIBLE);
+                        pending_rel.setAnimation(inFromLeftAnimation());
+                        aft_rel.setAnimation(inFromRightAnimation());
+
+                        Picasso.get().load(driverImg).into(dr_img);
+                        txt_dr_name.setText(driverName);
+                        Number_Car.setText(driverCarNumber);
+
+                        setNotify(phone,driverID);
+
+
+                        call_to_driver.setOnClickListener(view -> {
+                            dialContactPhone(driverPhone);
+                        });
+                    }
+                }
+            });
+
+        }
+    }
+
+
+    private Animation inFromRightAnimation() {
+
+        Animation inFromRight = new TranslateAnimation(
+                Animation.RELATIVE_TO_PARENT, +1.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f);
+        inFromRight.setDuration(1500);
+        inFromRight.setInterpolator(new AccelerateInterpolator());
+        return inFromRight;
+    }
+
+
+    private Animation outToLeftAnimation() {
+        Animation outtoLeft = new TranslateAnimation(
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, -1.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f);
+        outtoLeft.setDuration(1500);
+        outtoLeft.setInterpolator(new AccelerateInterpolator());
+        return outtoLeft;
+    }
+
+    private Animation inFromLeftAnimation() {
+        Animation inFromLeft = new TranslateAnimation(
+                Animation.RELATIVE_TO_PARENT, -1.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f);
+        inFromLeft.setDuration(1500);
+        inFromLeft.setInterpolator(new AccelerateInterpolator());
+        return inFromLeft;
+    }
+
+
+    private Animation outToRightAnimation() {
+        Animation outtoRight = new TranslateAnimation(
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, +1.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f);
+        outtoRight.setDuration(1500);
+        outtoRight.setInterpolator(new AccelerateInterpolator());
+        return outtoRight;
+    }
+
+
+    public void setNotify(String myPh,String DriverId) {
+
+        manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+
+        myintent = new Intent(Home_Maps_Activity.this, Notification_Receiver.class);
+
+        myintent.putExtra("myPh",myPh);
+        myintent.putExtra("DriverId",DriverId);
+
+
+        pendingIntent = PendingIntent.getBroadcast(Home_Maps_Activity.this, 0, myintent, 0);
+
+
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 6000, 6000, pendingIntent);
+
+        //manager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime()+6000,pendingIntent);
+
     }
 }

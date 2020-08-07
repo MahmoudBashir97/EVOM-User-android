@@ -65,6 +65,8 @@ public class Verify_phone_Activity extends AppCompatActivity {
 
         edt_usenPh.setText(phone);
 
+        Toast.makeText(this, ""+phone, Toast.LENGTH_SHORT).show();
+
 
 
         auth = FirebaseAuth.getInstance();

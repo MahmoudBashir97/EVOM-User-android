@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/rel_big"
     >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
             android:layout_height="wrap_content"
             android:text="@string/nav_wallet_w"
             android:textSize="25sp"
-            android:textColor="#000"
+            android:textColor="#fff"
             android:textStyle="bold"
             android:layout_marginTop="15dp"
             android:layout_below="@id/toolbar"
@@ -39,11 +40,11 @@
         android:layout_marginTop="50dp">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your Credit"
+            android:text="@string/credit_w"
             android:textSize="25sp"
-            android:textColor="#000"
+            android:textColor="#fff"
             android:id="@+id/txtyourcedit"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"/>
@@ -57,22 +58,21 @@
                 android:id="@+id/txt_usercredit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="250"
+                android:text="00"
                 android:textSize="30sp"
-                android:textColor="#000"
+                android:textColor="#fff"
                 android:textStyle="bold"
                 android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"/>
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"/>
 
             <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="EGP"
+            android:text="@string/egp_w"
             android:textSize="30sp"
-            android:textColor="#000"
+            android:textColor="#fff"
             android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="20dp"
             />
         </LinearLayout>
 

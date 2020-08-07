@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">E V O M</string>
-    <string name="title_activity_home__maps_">E V O M</string>
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -12,6 +11,7 @@
 
     <!-- HomeMaps_Activity -->
     <string name="where_to_go_w">Where to go?</string>
+    <string name="pending_w">Pending</string>
 
     <!-- Nav Header -->
     <string name="nav_trips_w">Your Trips</string>
@@ -45,6 +45,7 @@
     <string name="payment_method_w">Payment Methods</string>
     <string name="cash_w">Cash</string>
     <string name="add_payment_method_w">Add Payment Method</string>
+    <string name="credit_w">Your Credit</string>
 
 
     <string name="slide_1_title">Hello Food!</string>
@@ -61,5 +62,11 @@
 
     <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
     <string name="play_again">Play Again</string>
+
+
+    <!-- Trips Activity -->
+    <string name="trips_w">Your last Trips</string>
+    <string name="egp_w">EGP</string>
+    <string name="completed_w">Completed</string>
 
 </resources>

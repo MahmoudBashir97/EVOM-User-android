@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/rel_big"
    >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
             android:layout_height="wrap_content"
             android:text="@string/payment_method_w"
             android:textSize="25sp"
-            android:textColor="#000"
+            android:textColor="#fff"
             android:textStyle="bold"
             android:layout_marginTop="15dp"
             android:layout_below="@id/toolbar"
@@ -41,6 +42,7 @@
         android:drawableLeft="@drawable/cash_icon"
         android:layout_marginTop="20dp"
         android:text="@string/cash_w"
+        android:textColor="#fff"
         android:id="@+id/cash"
         android:textSize="25sp" />
     <TextView
@@ -51,7 +53,7 @@
         android:text="@string/add_payment_method_w"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/dot_dark_screen4"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"/>
 

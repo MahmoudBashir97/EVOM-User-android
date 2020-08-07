@@ -39,6 +39,20 @@ public class SharedPrefranceManager {
         editor.apply();
     }
 
+    public void save_RequestState(String StateRequestInOut,String RequestWaitingResponse,String DriverID){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_USER, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+
+        editor.putString("StateRequestInOut", StateRequestInOut);
+        editor.putString("RequestWaitingResponse", RequestWaitingResponse);
+        editor.putString("DriverID", DriverID);
+
+
+        editor.commit();
+        editor.apply();
+    }
+
     public void wlecomeUser(){
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_USER, Context.MODE_PRIVATE);
@@ -50,6 +64,22 @@ public class SharedPrefranceManager {
         editor.commit();
         editor.apply();
 
+    }
+
+    public String getStateRequestInOut() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_USER, Context.MODE_PRIVATE);
+        return sharedPreferences.getString("StateRequestInOut", "");
+    }
+
+
+    public String getRequestWaitingResponse() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_USER, Context.MODE_PRIVATE);
+        return sharedPreferences.getString("RequestWaitingResponse", "");
+    }
+
+    public String getDriverID() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_USER, Context.MODE_PRIVATE);
+        return sharedPreferences.getString("DriverID", "");
     }
 
 

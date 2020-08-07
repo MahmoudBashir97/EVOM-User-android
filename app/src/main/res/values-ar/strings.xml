@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
-    <string name="app_name">EVOM_User_app</string>
-    <string name="title_activity_home__maps_">Map</string>
+    <string name="app_name">E V O M</string>
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -15,6 +13,8 @@
 
     <!-- HomeMaps_Activity -->
     <string name="where_to_go_w">إلى أين؟</string>
+    <string name="pending_w">انتظار</string>
+
 
     <!-- Nav Header -->
     <string name="nav_trips_w">رحلاتك</string>
@@ -43,7 +43,14 @@
     <string name="payment_method_w">طرق الدفع</string>
     <string name="cash_w">كاش</string>
     <string name="add_payment_method_w">اضافة وسيلة دفع</string>
+    <string name="credit_w">رصيدك</string>
 
+
+
+    <!-- Trips Activity -->
+    <string name="trips_w">التوصيلات السابقة</string>
+    <string name="egp_w">ج.م</string>
+    <string name="completed_w">اكتملت</string>
 
 
 

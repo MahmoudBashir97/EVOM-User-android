@@ -40,7 +40,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(LOG_TAG, remoteMessage.getData().toString() + "");
 
         Log.d(LOG_TAG, "onMessageReceived: ");
-        String request = remoteMessage.getData().get("request");
+        String request = remoteMessage.getData().get("requestStatus");
 
         if (remoteMessage.getData().get("request").equals("message")){
 
@@ -56,17 +56,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         }
 
-        if (request.equals("req")){
+        if (remoteMessage.getData().get("requestStatus").equals("accept")){
 
             String senderId = remoteMessage.getData().get("senderId");
             String senderName = remoteMessage.getData().get("senderName");
-            SendRequestChat(senderId,senderName);
-        }
+            getRequestStatus(senderId,senderName);
+        } //else if (request.equals("reject")) { }
     }
 
     private void handleInviteIntent(String senderId, String senderName,String receiverId, String message,String countbadge) {
-
-         count= Integer.parseInt(countbadge);
 
         Intent reciveMessage = new Intent(getApplicationContext(), MyReceiver.class)
                 .setAction("message")
@@ -114,7 +112,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    private void SendRequestChat(String senderId, String senderName){
+    private void getRequestStatus(String senderId, String senderName){
 
         Intent reciveMessage = new Intent(getApplicationContext(), MyReceiver.class)
                 .setAction("chatrequest")
@@ -136,7 +134,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 //.setSmallIcon(R.drawable.ic_add_request)
                 .setPriority(PRIORITY_MAX)
                 .setContentTitle(String.format("You have new chat Request \n From", senderName))
-                //.addAction(R.drawable.ic_check_black_24dp, "Open", pendingIntentAccept)
                 .setVibrate(new long[3000])
                 .setChannelId(MESSAGE)
                 .setContentIntent(resultPendingIntent)
@@ -159,13 +156,4 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationManager.notify(2, build);
 
     }
-
-
-
-  /*
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        bubblesManager.recycle();
-    }*/
 }

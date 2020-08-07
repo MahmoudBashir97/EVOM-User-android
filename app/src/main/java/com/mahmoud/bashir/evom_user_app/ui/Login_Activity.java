@@ -644,7 +644,7 @@ public void getCUID (){
         public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
             String codesms=phoneAuthCredential.getSmsCode();
             if (codesms !=null){
-                verifycode(codesms,null);
+                verifycode(codesms,full_phone);
             }
         }
 

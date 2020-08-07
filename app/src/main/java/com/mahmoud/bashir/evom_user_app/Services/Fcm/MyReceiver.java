@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 
+import com.mahmoud.bashir.evom_user_app.Maps.Home_Maps_Activity;
+
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class MyReceiver extends BroadcastReceiver {
@@ -36,19 +38,11 @@ public class MyReceiver extends BroadcastReceiver {
                                     //.putExtra("image",image)
                                     .putExtra("countbadge",countbadge)
                                     .addFlags(FLAG_ACTIVITY_NEW_TASK));
-                           try {
-                                Badges.removeBadge(context);
-                                // Alternative way
-                                //Badges.setBadge(context, 0);
-                            } catch (BadgesNotSupportedException badgesNotSupportedException) {
-                                Log.d("Error", badgesNotSupportedException.getMessage());
-                            }
-                         }
-                         if (intent.getAction().equals("chatrequest")) {
-                             context.startActivity(new Intent(context, MainActivity.class)
-                                     .putExtra("senderId", senderId)
-                                     .putExtra("senderName", senderName)
-                                     .addFlags(FLAG_ACTIVITY_NEW_TASK));
-                         }*/
+                        */
+
+        if (intent.getAction().equals("request")) {
+            context.startActivity(new Intent(context, Home_Maps_Activity.class)
+                    .addFlags(FLAG_ACTIVITY_NEW_TASK));
+        }
     }
 }
