@@ -4,7 +4,6 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,6 @@ import com.mahmoud.bashir.evom_user_app.R
 import com.mahmoud.bashir.evom_user_app.Storage.SharedPrefranceManager
 import com.mahmoud.bashir.evom_user_app.pojo.SendRequest.trip_details_Model
 import io.paperdb.Paper
-import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -88,6 +86,9 @@ class TripsActiviy : AppCompatActivity() {
                     val d = date.split(" ").map {it.trim()}
                     tripModel = trip_details_Model(d[0],d[1],userlat,userlng,userdestlat,userdestlng,"30")
                     mlist.add(tripModel)
+
+                   // Toast.makeText(this@TripsActiviy,""+userlat,Toast.LENGTH_LONG).show()
+
                 }
 
                 recAdpt = RecyclerAdapter(mlist,this@TripsActiviy)
@@ -131,24 +132,57 @@ class RecyclerAdapter(val mlist : ArrayList<trip_details_Model> = ArrayList<trip
         holder.date_txt.setText(tripDetailsModel.date)
         holder.time_txt.setText(tripDetailsModel.time)
         holder.userplace_txt.setText(getAddressName(tripDetailsModel.userplace_lat,tripDetailsModel.userplace_lng))
-        holder.userdestination_txt.setText(getAddressName(tripDetailsModel.userdest_lat,tripDetailsModel.userdest_lng))
+        holder.userdestination_txt.setText("Zag")
         holder.txt_tripPrice.setText("30")
 
+        //Toast.makeText(context,""+tripDetailsModel.userplace_lat+" ---" +tripDetailsModel.userplace_lng,Toast.LENGTH_LONG).show()
+        getAddressName(tripDetailsModel.userplace_lat,tripDetailsModel.userplace_lng)
     }
 
     fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {
         return LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
     }
 
+
     fun getAddressName(latitude: Double, longitude: Double): String? {
-        Paper.init(context
-        )
 
+        Paper.init(context)
         var result = ""
-
         var lang = "en"
+        if (Paper.book().read<String>("language").equals("ar")){
+            lang = "ar"
+        }else if (Paper.book().read<String>("language").equals("en")){
+            lang = "en"
+        }
 
 
+
+            /*val mLocale = Locale(lang)
+            val geocoder: Geocoder
+            var fulladdress:String =""
+            val addresses: List<Address>?
+            geocoder = Geocoder(context, Locale.getDefault())
+
+            addresses = geocoder.getFromLocation(latitude, longitude, 1) // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+
+            val address = addresses[0].getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+
+            val city = addresses[0].locality
+            val state = addresses[0].adminArea
+            val country = addresses[0].countryName
+            val postalCode = addresses[0].postalCode
+            val knownName = addresses[0].featureName // Only if available else return NULL
+            fulladdress = city+"-"+state*/
+
+        return ""
+    }
+
+/*
+    fun getAddressName(latitude: Double, longitude: Double): String? {
+        Paper.init(context)
+        var result = ""
+        var lang = "en"
         if (Paper.book().read<String>("language").equals("ar")){
             lang = "ar"
         }else if (Paper.book().read<String>("language").equals("en")){
@@ -165,14 +199,17 @@ class RecyclerAdapter(val mlist : ArrayList<trip_details_Model> = ArrayList<trip
         try {
             val listAddresses: List<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
             if (null != listAddresses && listAddresses.size > 0) {
-                //val _Location: String = listAddresses[0].getAddressLine(0)
+                val _Location: String = listAddresses[0].getAddressLine(0)
                 // Log.i("_Location = ", "" + _Location);
+
                 val address: Address = listAddresses[0]
                 Log.i("address = ", "" + address)
                 result = address.getSubAdminArea() + "-" + address.getThoroughfare()
                 Log.i("result = ", "" + result)
-                // Toast.makeText(getApplicationContext(), "Your Location  NAME is -" + result , Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "Your Location  NAME is -" + result , Toast.LENGTH_LONG).show();
             }
+
+
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -180,5 +217,5 @@ class RecyclerAdapter(val mlist : ArrayList<trip_details_Model> = ArrayList<trip
     }
 
 
-
+  */
 }

@@ -18,6 +18,8 @@ import com.mahmoud.bashir.evom_user_app.Maps.Home_Maps_Activity;
 import com.mahmoud.bashir.evom_user_app.R;
 import com.mahmoud.bashir.evom_user_app.Storage.SharedPrefranceManager;
 
+import io.paperdb.Paper;
+
 public class Welcome_Activity extends AppCompatActivity {
 
     private ViewPager viewPager;
@@ -33,14 +35,15 @@ public class Welcome_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         if (SharedPrefranceManager.getInastance(this).isFirstOne() == true){
             startActivity(new Intent(this,Login_Activity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();
         }
 
         setContentView(R.layout.activity_welcome_);
+
+        Paper.init(this);
+        Paper.book().write("language","en");
 
         viewPager = findViewById(R.id.view_pager);
 

@@ -251,6 +251,7 @@ public class Login_Activity extends AppCompatActivity {
                     full_phone = selectedCode + edt_phone_no.getText().toString();
                     Check_existing_ph_no(full_phone);
 
+                    Toast.makeText(this, ""+full_phone, Toast.LENGTH_SHORT).show();
                 }else if (status.equals("in password")){
 
                     if (TextUtils.isEmpty(edt_password.getText().toString())){

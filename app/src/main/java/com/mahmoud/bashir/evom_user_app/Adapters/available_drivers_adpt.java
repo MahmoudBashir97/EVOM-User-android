@@ -45,10 +45,8 @@ public class available_drivers_adpt extends RecyclerView.Adapter<available_drive
         holder.txt_driver_name.setText(m.getDriver_name());
         Picasso.get().load(m.getDriver_img()).into(holder.driver_img);
         holder.request_btn.setOnClickListener(view -> {
-            Toast.makeText(context, "Requested!!!!!", Toast.LENGTH_SHORT).show();
-        });
 
-        holder.request_btn.setOnClickListener(view -> {
+
             requestOnClickInterface.OnClick(position,
                     m.getDriver_name(),
                     m.getDriver_img(),

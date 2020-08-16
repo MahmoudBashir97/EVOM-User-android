@@ -82,6 +82,7 @@ import com.mahmoud.bashir.evom_user_app.pojo.driver_Info_Model;
 import com.mahmoud.bashir.evom_user_app.ui.Payment_Activity;
 import com.mahmoud.bashir.evom_user_app.ui.Settings_Activity;
 import com.mahmoud.bashir.evom_user_app.ui.TripsActiviy;
+import com.mahmoud.bashir.evom_user_app.ui.Trips_act;
 import com.mahmoud.bashir.evom_user_app.ui.Wallet_Activity;
 import com.squareup.picasso.Picasso;
 import com.sucho.placepicker.AddressData;
@@ -157,7 +158,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
     FirebaseDatabase database;
     DatabaseReference reference,request_ref;
     FirebaseAuth auth;
-    String CUID;
+    //String CUID;
     available_drivers_adpt available_drivers_adpt;
     driver_Info_Model driver_info_model;
     List<driver_Info_Model> driver_info_modelList;
@@ -213,7 +214,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         reference = FirebaseDatabase.getInstance().getReference().child("Nearby_drivers");
         request_ref = FirebaseDatabase.getInstance().getReference().child("Requests");
         auth = FirebaseAuth.getInstance();
-        CUID = auth.getCurrentUser().getUid();
+        //CUID = auth.getCurrentUser().getUid();
 
 
 
@@ -262,7 +263,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         nav_settings =headerView.findViewById(R.id.nav_settings);
         nav_user_name.setText(SharedPrefranceManager.getInastance(Home_Maps_Activity.this).getUsername());
         nav_trips.setOnClickListener(view -> {
-            nt = new Intent(Home_Maps_Activity.this, TripsActiviy.class);
+            nt = new Intent(Home_Maps_Activity.this, Trips_act.class);
             startActivity(nt);
             drawer.closeDrawer(GravityCompat.START);
         });
@@ -615,7 +616,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         mMap.clear();
         mMap.addMarker(new MarkerOptions().position(mylatLng).title("My Location").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(mylatLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         if (dest_lat != null){
             placelatlng= new LatLng(dest_lat,dest_lng);
             mMap.addMarker(new MarkerOptions().position(placelatlng).title("destination").icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)));
@@ -859,6 +860,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         if (lastLocation != null && dest_lat != null ) {
 
 
+
             // get current date and time with request
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String date = df.format(new Date());
@@ -867,7 +869,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
             String name = SharedPrefranceManager.getInastance(this).getUsername();
             String phone = SharedPrefranceManager.getInastance(this).getUserPhone();
 
-            data_request data = new data_request(CUID, dToken, name, phone, lastLocation.getLatitude(), lastLocation.getLongitude(), dest_lat, dest_lng, date,"Pending");
+            data_request data = new data_request(phone, dToken, name, phone, lastLocation.getLatitude(), lastLocation.getLongitude(), dest_lat, dest_lng, date,"Pending");
 
             //need to send request to firebase also
             HashMap<String,Object> map = new HashMap<>();

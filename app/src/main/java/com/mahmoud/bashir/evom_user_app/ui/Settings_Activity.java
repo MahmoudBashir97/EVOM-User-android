@@ -57,12 +57,11 @@ public class Settings_Activity extends AppCompatActivity {
         //to Sign Out
         txt_signOut.setOnClickListener(view -> {
 
-
+            SharedPrefranceManager.getInastance(Settings_Activity.this).clearUser();
             Intent i = new Intent(Settings_Activity.this,Login_Activity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
             finish();
-            SharedPrefranceManager.getInastance(Settings_Activity.this).clearUser();
         });
 
 
