@@ -1,42 +1,37 @@
 {
   "project_info": {
-    "project_number": "383190207472",
-    "firebase_url": "https://evom-5374d.firebaseio.com",
-    "project_id": "evom-5374d",
-    "storage_bucket": "evom-5374d.appspot.com"
+    "project_number": "1072402432290",
+    "firebase_url": "https://taxia-f65e1.firebaseio.com",
+    "project_id": "taxia-f65e1",
+    "storage_bucket": "taxia-f65e1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:383190207472:android:37abe82dec66523169ab35",
+        "mobilesdk_app_id": "1:1072402432290:android:15b20dbee8cc7b8a94257b",
         "android_client_info": {
           "package_name": "com.mahmoud.bashir.evom_user_app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "383190207472-bctjqf27h6bo23b6bala3npoghlntgk1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mahmoud.bashir.evom_user_app",
-            "certificate_hash": "f6f0330153c80be4f6a659c6430f64ce443e6d7a"
-          }
-        },
-        {
-          "client_id": "383190207472-va4qcai9h2bmuqlmjioemd88joae3bgq.apps.googleusercontent.com",
+          "client_id": "1072402432290-tbqimj9haiajp35p6kuh30ebui933nsh.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBIoKVEfJl-FjL9CVsfZivDFsiAh6SsdJ8"
+          "current_key": "AIzaSyDjQkAhvrHu_H9kKU1jxOVH0ds_QrwHcFg"
+        },
+        {
+          "current_key": "AIzaSyCsIKSCx_C1qET7xUVJ1qrAm37nDrafok8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "383190207472-va4qcai9h2bmuqlmjioemd88joae3bgq.apps.googleusercontent.com",
+              "client_id": "1072402432290-tbqimj9haiajp35p6kuh30ebui933nsh.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
@@ -45,72 +40,38 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:383190207472:android:27950419098c804869ab35",
+        "mobilesdk_app_id": "1:1072402432290:android:c82fa00d070633db94257b",
         "android_client_info": {
-          "package_name": "com.mahmoud.bashir.evomdriverapp"
+          "package_name": "com.mahmoud.bashir.taxia"
         }
       },
       "oauth_client": [
         {
-          "client_id": "383190207472-r7mupj2lcbbocsbthu8l6nsl65os9uhb.apps.googleusercontent.com",
+          "client_id": "1072402432290-ckau32bro4k23r5m4s4h1jh9ahtfonik.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.mahmoud.bashir.evomdriverapp",
+            "package_name": "com.mahmoud.bashir.taxia",
             "certificate_hash": "f6f0330153c80be4f6a659c6430f64ce443e6d7a"
           }
         },
         {
-          "client_id": "383190207472-va4qcai9h2bmuqlmjioemd88joae3bgq.apps.googleusercontent.com",
+          "client_id": "1072402432290-tbqimj9haiajp35p6kuh30ebui933nsh.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBIoKVEfJl-FjL9CVsfZivDFsiAh6SsdJ8"
+          "current_key": "AIzaSyDjQkAhvrHu_H9kKU1jxOVH0ds_QrwHcFg"
+        },
+        {
+          "current_key": "AIzaSyCsIKSCx_C1qET7xUVJ1qrAm37nDrafok8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "383190207472-va4qcai9h2bmuqlmjioemd88joae3bgq.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:383190207472:android:24e8665046f7171269ab35",
-        "android_client_info": {
-          "package_name": "com.mahmoud.bashir.m_a_p_with_search"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "383190207472-99r1lihgkp2gp5am6ilgjp4ck05g0asc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mahmoud.bashir.m_a_p_with_search",
-            "certificate_hash": "f6f0330153c80be4f6a659c6430f64ce443e6d7a"
-          }
-        },
-        {
-          "client_id": "383190207472-va4qcai9h2bmuqlmjioemd88joae3bgq.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBIoKVEfJl-FjL9CVsfZivDFsiAh6SsdJ8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "383190207472-va4qcai9h2bmuqlmjioemd88joae3bgq.apps.googleusercontent.com",
+              "client_id": "1072402432290-tbqimj9haiajp35p6kuh30ebui933nsh.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

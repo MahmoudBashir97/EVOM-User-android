@@ -29,7 +29,6 @@ import io.paperdb.Paper;
 public class Settings_Activity extends AppCompatActivity {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.txt_signOut) TextView txt_signOut;
     @BindView(R.id.txt_email) TextView txt_email;
     @BindView(R.id.txtphonenumber) TextView txtphonenumber;
     @BindView(R.id.txt_fname) TextView txt_fname;
@@ -54,15 +53,7 @@ public class Settings_Activity extends AppCompatActivity {
         txt_email.setText(SharedPrefranceManager.getInastance(this).getUserEmail());
 
 
-        //to Sign Out
-        txt_signOut.setOnClickListener(view -> {
 
-            SharedPrefranceManager.getInastance(Settings_Activity.this).clearUser();
-            Intent i = new Intent(Settings_Activity.this,Login_Activity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
-            finish();
-        });
 
 
         // init paper first

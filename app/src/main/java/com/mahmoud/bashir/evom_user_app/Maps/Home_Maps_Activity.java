@@ -79,6 +79,7 @@ import com.mahmoud.bashir.evom_user_app.Storage.SharedPrefranceManager;
 import com.mahmoud.bashir.evom_user_app.loadingAlertdialog.LoadingDialog;
 import com.mahmoud.bashir.evom_user_app.pojo.SendRequest.data_request;
 import com.mahmoud.bashir.evom_user_app.pojo.driver_Info_Model;
+import com.mahmoud.bashir.evom_user_app.ui.Login_Activity;
 import com.mahmoud.bashir.evom_user_app.ui.Payment_Activity;
 import com.mahmoud.bashir.evom_user_app.ui.Settings_Activity;
 import com.mahmoud.bashir.evom_user_app.ui.TripsActiviy;
@@ -127,7 +128,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
     //initviews
     EditText edt_to_destination;
     ImageView open_drawer,call_to_driver;
-    TextView nav_user_name,nav_trips,nav_wallet,nav_payment,nav_packages,nav_settings,txt_request_status,trip_price,distance_v,Number_Car,txt_dr_name;
+    TextView nav_user_name,nav_trips,nav_wallet,nav_payment,nav_packages,nav_settings,nav_txt_signOut,txt_request_status,trip_price,distance_v,Number_Car,txt_dr_name;
     View bottom_sheet;
     RecyclerView rec_btsheet,rec_available_drivers;
     RelativeLayout rel_dest,pending_rel,aft_rel,Info_dr_rel,cl_rel;
@@ -261,6 +262,7 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
         nav_payment =headerView.findViewById(R.id.nav_payment);
         nav_packages =headerView.findViewById(R.id.nav_packages);
         nav_settings =headerView.findViewById(R.id.nav_settings);
+        nav_txt_signOut = headerView.findViewById(R.id.txt_signOut);
         nav_user_name.setText(SharedPrefranceManager.getInastance(Home_Maps_Activity.this).getUsername());
         nav_trips.setOnClickListener(view -> {
             nt = new Intent(Home_Maps_Activity.this, Trips_act.class);
@@ -285,6 +287,15 @@ public class Home_Maps_Activity extends AppCompatActivity implements OnMapReadyC
             nt = new Intent(Home_Maps_Activity.this, Settings_Activity.class);
             startActivity(nt);
             drawer.closeDrawer(GravityCompat.START);
+        });
+        //to Sign Out
+        nav_txt_signOut.setOnClickListener(view -> {
+            drawer.closeDrawer(GravityCompat.START);
+            Intent i = new Intent(Home_Maps_Activity.this, Login_Activity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+            finish();
+            SharedPrefranceManager.getInastance(Home_Maps_Activity.this).clearUser();
         });
         open_drawer.setOnClickListener(view -> {
             drawer.open();

@@ -73,6 +73,10 @@
             android:name=".ui.TripsActiviy"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".ui.Trips_act"
+            android:screenOrientation="portrait"
+            />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
